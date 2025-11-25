@@ -67,25 +67,23 @@ jobs:
         run: echo "tag=v$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          name: Custom Plugins ${{ steps.tag.outputs.tag }}
-          body: |
-            Custom 1Password shell plugins build.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ steps.tag.outputs.tag }} \
+            --title "Custom Plugins ${{ steps.tag.outputs.tag }}" \
+            --notes "Custom 1Password shell plugins build.
 
-            ## Included Plugins
-            - **restic** - Backup tool with support for S3, Azure, B2, GCS, and REST backends
-            - **llm** - Simon Willison's LLM CLI with OpenAI and OpenRouter support
+          ## Included Plugins
+          - **restic** - Backup tool with support for S3, Azure, B2, GCS, and REST backends
+          - **llm** - Simon Willison's LLM CLI with OpenAI and OpenRouter support
 
-            ## Installation
-            Download the appropriate binary for your platform and place it in `~/.config/op/plugins/local/`
+          ## Installation
+          Download the appropriate binary for your platform and place it in \`~/.config/op/plugins/local/\`
 
-            ```bash
-            mkdir -p ~/.config/op/plugins/local
-            chmod 700 ~/.config/op/plugins/local
-            # Download and rename to just the plugin name (e.g., 'restic' or 'llm')
-            ```
-          files: dist/*
-          draft: false
-          prerelease: false
+          \`\`\`bash
+          mkdir -p ~/.config/op/plugins/local
+          chmod 700 ~/.config/op/plugins/local
+          # Download and rename to just the plugin name (e.g., 'restic' or 'llm')
+          \`\`\`" \
+            dist/*
